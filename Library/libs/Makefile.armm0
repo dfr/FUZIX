@@ -116,7 +116,7 @@ libc.l:%.l:$(OBJ_ALL)
 
 syscall.l: fuzix$(PLATFORM)/syslib.l
 	../tools/syscall_$(PLATFORM)
-	(cd fuzix$(PLATFORM); make)
+	(cd fuzix$(PLATFORM); $(MAKE))
 	cat fuzix$(PLATFORM)/syslib.l | tr " " "\\n" | sed -e "s/^/fuzix$(PLATFORM)\//" >syscall.l
 
 syslib$(PLATFORM).lib: syscall.l libc.l
@@ -126,16 +126,16 @@ syslib$(PLATFORM).lib: syscall.l libc.l
 
 fuzix$(PLATFORM)/syslib.l: ../tools/syscall_$(PLATFORM)
 	$<
-	make -C fuzix$(PLATFORM)
+	$(MAKE) -C fuzix$(PLATFORM)
 
 ../tools/syscall_$(PLATFORM): ../tools/syscall_$(PLATFORM).c
-	make -C .. tools/syscall_$(PLATFORM)
+	$(MAKE) -C .. tools/syscall_$(PLATFORM)
 
 liberror.txt: ../tools/liberror
 	$< > $@
 
 ../tools/liberror: ../tools/liberror.c
-	make -C .. tools/liberror
+	$(MAKE) -C .. tools/liberror
 
 curses$(PLATFORM).lib: $(OBJ_CURS)
 	$(AR) rc curses$(PLATFORM).lib $(OBJ_CURS)
