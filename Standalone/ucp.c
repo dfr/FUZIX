@@ -118,6 +118,7 @@ int main(int argc, char *argval[])
 			if (interactive)
 				printf("ucp: ");
 			if (fgets(line, 128, stdin) == NULL) {
+				fuzix_sync();
 				xfs_end();
 				exit(retc);
 			}
@@ -163,6 +164,7 @@ int main(int argc, char *argval[])
 			continue;
 		switch (match(cmd)) {
 		case 0:	/* exit */
+			fuzix_sync();
 			xfs_end();
 			exit(retc);
 
