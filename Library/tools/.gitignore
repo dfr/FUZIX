@@ -4,7 +4,7 @@
 /fuzixlib
 /libclean
 /liberror
-/relocbin
+/relocbin*
 /syscall
 /syscall-scc6809
 /syscall_6303
@@ -13,3 +13,4 @@
 /syscall_6809
 /syscall_8080
 /syscall_msp430x
+/shlibgen
