@@ -1,0 +1,11 @@
+# Used to make a minimal system -- eg, for floppy.
+package  platform-rpipico
+
+disable-pkg ALL platform-rpipico
+enable-pkg mini util V7-cmd adventure levee-vt52 levee-ansi
+
+f 0755 /bin/blkdiscard ../../Applications/util/blkdiscard
+f 0755 /usr/games/cowsay ../../Applications/games/cowsay
+
+r      /bin/levee
+l      /bin/levee-ansi       /bin/levee

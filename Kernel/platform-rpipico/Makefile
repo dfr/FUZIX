@@ -2,7 +2,7 @@
 export PICO_SDK_FETCH_FROM_GIT = yes
 #export PICO_SDK_PATH = /home/dg/src/pico/pico-sdk
 
-build/fuzix.elf: ../version.c build/Makefile
+build/fuzix.elf build/fuzix.uf2: ../version.c build/Makefile
 	$(MAKE) -C build
 
 ../version.c:
@@ -12,14 +12,20 @@ build/Makefile: CMakeLists.txt $(wildcard ../*.[chS]) $(wildcard ../*/*.[chS])
 	mkdir -p build
 	(cd build && cmake ..)
 
-image:: world uf2conv
-	./update-flash.sh
-	../../Standalone/mkftl -s 1952 -e 0x1000 -g 10 filesystem.img -o filesystem.ftl
+image:: diskimage
+
+IMAGES = $(FUZIX_ROOT)/Images/$(TARGET)
+
+diskimage:: build/fuzix.uf2 world uf2conv
+	cp build/fuzix.uf2 $(IMAGES)
+	(cd $(FUZIX_ROOT)/Standalone/filesystem-src; ./build-filesystem-ng -f $(IMAGES)/filesystem.img -g 64 2547 -p platform-rpipico)
+	$(FUZIX_ROOT)/Standalone/mkftl -s 1952 -e 0x1000 -g 10 -o filesystem.ftl $(IMAGES)/filesystem.img
 	arm-none-eabi-objcopy -I binary -O elf32-littlearm --change-section-vma .data=0x10018000 filesystem.ftl filesystem.elf
-	./uf2conv filesystem.ftl filesystem.uf2 0x10018000
+	./uf2conv filesystem.ftl $(IMAGES)/filesystem.uf2 0x10018000
 
 clean:
 	rm -rf build
+	rm -f filesystem.ftl filesystem.elf uf2conv
 	$(MAKE) -C ../../Library/libs -f Makefile.armm0 clean
 	$(MAKE) -C ../../Applications/util -f Makefile.armm0 clean
 	$(MAKE) -C ../../Applications/V7/cmd -f Makefile.armm0 clean
