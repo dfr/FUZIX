@@ -256,6 +256,9 @@ static char *staknam(register NAMPTR n)
 
 void exname(register NAMPTR n)
 {
+	if (n->namflg & N_ENVNAM) {
+		return;
+	}
 	if (n->namflg & N_EXPORT) {
 		sh_free((void *)n->namenv);
 		n->namenv = make(n->namval);
